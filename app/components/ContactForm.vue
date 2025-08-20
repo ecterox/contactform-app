@@ -132,4 +132,21 @@ watch(meta, () => {
 const onSubmit = handleSubmit(values => {
   alert(JSON.stringify(values, null, 2))
 })
+  /*await $fetch( 'localhost:80/api/contact', {
+    method: 'POST',
+    body: values
+  });
+
+  await useFetch('/api/contact', {
+    method: 'POST',
+    body: values
+  })
+})
+
+/*async function testSubmit( data ){
+  const { data, error } = await useFetch('/api/contact', {
+    method: 'POST',
+    body: {}
+  })
+}*/
 </script>
