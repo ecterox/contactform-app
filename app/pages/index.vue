@@ -1,15 +1,9 @@
-<script setup>
-function toggleTheme() {
-  this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
-}
-</script>
-
 <template>
-  <div>
-    <v-btn icon v-if="!$vuetify.theme.dark" @click="toggleTheme()">
+  <div class="ma-5">
+    <v-btn icon v-if="theme.name.value !== 'dark'" @click="toggleTheme()">
       <v-icon class="mr-1" color="blue-grey darken-4">mdi-lightbulb</v-icon>
     </v-btn>
-    <v-btn icon v-if="$vuetify.theme.dark" @click="toggleTheme()">
+    <v-btn icon v-if="theme.name.value === 'dark'" @click="toggleTheme()">
       <v-icon color="yellow darken-3">mdi-lightbulb-outline</v-icon>
     </v-btn>
   </div>
@@ -22,3 +16,12 @@ function toggleTheme() {
 <style scoped>
 
 </style>
+
+<script setup>
+const theme = useTheme();
+
+const toggleTheme = () => {
+  theme.toggle(['dark', 'light']);
+  console.log('Theme: ' + theme.name.value)
+}
+</script>

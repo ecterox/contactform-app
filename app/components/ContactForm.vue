@@ -34,8 +34,8 @@
         ></v-text-field>
 
         <v-select
-            v-model="select.value.value"
-            :error-messages="select.errorMessage.value"
+            v-model="topic.value.value"
+            :error-messages="topic.errorMessage.value"
             :items="items"
             label="Thema"
             prepend-inner-icon="mdi-information"
@@ -92,7 +92,7 @@ const { handleSubmit, handleReset, meta } = useForm({
 
       return 'Es muss eine gültige E-Mail sein.'
     },
-    select (value) {
+    topic (value) {
       if (value) return true
 
       return 'Wähle die Thematik dieser Nachricht.'
@@ -109,7 +109,7 @@ const name = useField('name')
 const message = useField('message')
 const phone = useField('phone')
 const email = useField('email')
-const select = useField('select')
+const topic = useField('topic')
 
 const items = ref([
   'Allgemein',
@@ -129,24 +129,16 @@ watch(meta, () => {
   console.log("Submittable: " + isSubmittable())
 })
 
-const onSubmit = handleSubmit(values => {
-  alert(JSON.stringify(values, null, 2))
-})
-  /*await $fetch( 'localhost:80/api/contact', {
+const toast = useToast()
+
+const onSubmit = handleSubmit(async(formData) => {
+  const { data } = await $fetch('/api/contact', {
     method: 'POST',
-    body: values
+    body: JSON.stringify(formData)
   });
 
-  await useFetch('/api/contact', {
-    method: 'POST',
-    body: values
-  })
+  handleReset()
+  toast.success({ title: 'Erfolg!', message: 'Nachricht übermittelt!' })
+  //console.log(data)
 })
-
-/*async function testSubmit( data ){
-  const { data, error } = await useFetch('/api/contact', {
-    method: 'POST',
-    body: {}
-  })
-}*/
 </script>
