@@ -1,15 +1,16 @@
 <template>
   <div class="ma-5">
-    <v-btn icon v-if="theme.name.value !== 'dark'" @click="toggleTheme()">
-      <v-icon class="mr-1" color="blue-grey darken-4">mdi-lightbulb</v-icon>
-    </v-btn>
-    <v-btn icon v-if="theme.name.value === 'dark'" @click="toggleTheme()">
-      <v-icon color="yellow darken-3">mdi-lightbulb-outline</v-icon>
-    </v-btn>
-  </div>
-
-  <div class="w-75 mx-auto my-15">
-    <ContactForm />
+    <v-btn icon="mdi-theme-light-dark" @click="toggleTheme()"></v-btn>
+    <div class="w-75 mx-auto my-15">
+      <ContactForm
+          title-placeholder="Anrede wählen..."
+          name-placeholder="Name eingeben..."
+          email-placeholder="E-Mail-Adresse eingeben..."
+          phone-placeholder="Telefonnummer eingeben..."
+          topic-placeholder="Betreff wählen..."
+          message-placeholder="Nachricht eingeben..."
+      />
+    </div>
   </div>
 </template>
 
