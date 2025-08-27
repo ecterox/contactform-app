@@ -46,8 +46,8 @@
       <v-select
           v-model="topic.value.value"
           :error-messages="topic.errorMessage.value"
-          :items="items"
           label="Betreff *"
+          :items="topics"
           :placeholder="topicPlaceholder"
           prepend-inner-icon="mdi-information"
           required
@@ -110,6 +110,14 @@ defineProps({
   messagePlaceholder: {
     type: String,
     default: 'Bitte eingeben...'
+  },
+  topics: {
+    type: Array,
+    default: () => [],
+  },
+  titles: {
+    type: Array,
+    default: () => [],
   }
 })
 
@@ -154,20 +162,6 @@ const email = useField('email')
 const phone = useField('phone')
 const topic = useField('topic')
 const message = useField('message')
-
-const titles = ref([
-  'Keine Angabe',
-  'Herr',
-  'Frau'
-])
-
-const items = ref([
-  'Allgemein',
-  'Konto',
-  'Bestellung',
-  'Zahlung',
-  'Sonstiges'
-])
 
 function isSubmittable() {
   return (meta.value.valid && meta.value.dirty
