@@ -1,12 +1,15 @@
 export default defineEventHandler(async (event) => {
     let response;
     try {
-        response = await $fetch.raw('http://localhost:80/api/contact/topics', {
-            method: 'GET',
+        const body = await readBody(event) // POST Data
+        response = await $fetch.raw('http://php:80/api/contact', {
+            method: 'POST',
+            body: body,
             headers: {
                 'Content-Type': 'application/json'
             }
         });
+        console.log(response?._data)
     } catch (error) {
         console.log(error)
     }

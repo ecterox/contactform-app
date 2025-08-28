@@ -8,16 +8,18 @@
           label="Anrede *"
           :placeholder="titlePlaceholder"
           prepend-inner-icon="mdi-information"
+          variant="underlined"
           required
       ></v-select>
 
       <v-text-field
           v-model="name.value.value"
-          :counter="10"
+          counter="10"
           :error-messages="name.errorMessage.value"
-          label="Name *"
+          label="Vollständiger Name *"
           :placeholder="namePlaceholder"
           prepend-inner-icon="mdi-account"
+          variant="underlined"
           clearable
           required
       ></v-text-field>
@@ -28,17 +30,19 @@
           label="E-Mail *"
           :placeholder="emailPlaceholder"
           prepend-inner-icon="mdi-email"
+          variant="underlined"
           clearable
           required
       ></v-text-field>
 
       <v-text-field
           v-model="phone.value.value"
-          :counter="7"
+          counter="7"
           :error-messages="phone.errorMessage.value"
           label="Telefon-Nr. *"
           :placeholder="phonePlaceholder"
           prepend-inner-icon="mdi-phone"
+          variant="underlined"
           clearable
           required
       ></v-text-field>
@@ -50,6 +54,7 @@
           :items="topics"
           :placeholder="topicPlaceholder"
           prepend-inner-icon="mdi-information"
+          variant="underlined"
           required
       ></v-select>
 
@@ -73,8 +78,11 @@
         Absenden
       </v-btn>
 
-      <v-btn @click="handleReset">
-        Zurücksetzen
+      <v-btn
+          @click="handleReset"
+          :disabled='!isDirty'
+      >
+        <v-icon>mdi-cancel</v-icon>
       </v-btn>
     </v-form>
   </div>
@@ -85,6 +93,7 @@ import { ref } from 'vue'
 import { useField, useForm, useSubmitCount, useIsSubmitting } from 'vee-validate'
 
 const submitDisabled = ref(true)
+const isDirty = ref(false)
 
 defineProps({
   titlePlaceholder: {
@@ -170,6 +179,7 @@ function isSubmittable() {
 
 watch(meta, () => {
   submitDisabled.value = !isSubmittable()
+  isDirty.value = meta.value.dirty
   console.log("Submittable: " + isSubmittable())
 })
 
@@ -186,6 +196,7 @@ const onSubmit = handleSubmit(async(formData) => {
     });
 
     //console.log(response?._data)
+    console.log(JSON.stringify(formData))
 
     if (response.ok) {
       toast.success({ title: 'Erfolg!', message: 'Nachricht übermittelt!' })
