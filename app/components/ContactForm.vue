@@ -14,7 +14,6 @@
 
       <v-text-field
           v-model="name.value.value"
-          counter="10"
           :error-messages="name.errorMessage.value"
           label="Vollständiger Name *"
           :placeholder="namePlaceholder"
@@ -38,6 +37,7 @@
       <v-text-field
           v-model="phone.value.value"
           counter="7"
+          counter-min
           :error-messages="phone.errorMessage.value"
           label="Telefon-Nr. *"
           :placeholder="phonePlaceholder"
@@ -70,55 +70,74 @@
           required
       ></v-textarea>
 
-      <v-btn
-          class="dark me-4"
-          type="submit"
-          :disabled="submitDisabled"
-      >
-        Absenden
+      <v-btn class="dark me-4" type="submit" :disabled="bIsSubmittable">
+        <div v-if="!bIsSubmitting">Absenden</div>
+        <v-icon v-else :class="`spin ${theme.name.value}`">mdi-loading</v-icon>
       </v-btn>
 
-      <v-btn
-          @click="handleReset"
-          :disabled='!isDirty'
-      >
-        <v-icon>mdi-cancel</v-icon>
+      <v-btn @click="handleReset" :disabled="!bIsDirty">
+        <v-icon>mdi-delete</v-icon>
       </v-btn>
     </v-form>
   </div>
 </template>
 
-<script setup>
-import { ref } from 'vue'
-import { useField, useForm, useSubmitCount, useIsSubmitting } from 'vee-validate'
+<style scoped>
+.spin {
+  display: inline-block; /* Ensure it can rotate properly */
+  animation: spin 2s linear infinite;
+}
+.spin.dark {
+  color: white;
+}
+.spin.light {
+  color: #1b1b1b;
+}
 
-const submitDisabled = ref(true)
-const isDirty = ref(false)
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+</style>
+
+<script setup>
+//import { ref } from 'vue'
+import { useField, useForm } from 'vee-validate'
+
+const theme = useTheme();
+
+const bIsSubmitting = ref(false)
+const bIsSubmittable = ref(true)
+const bIsDirty = ref(false)
 
 defineProps({
   titlePlaceholder: {
     type: String,
-    default: 'Bitte eingeben...'
+    default: () => 'Bitte eingeben...'
   },
   namePlaceholder: {
     type: String,
-    default: 'Bitte eingeben...'
+    default: () => 'Bitte eingeben...'
   },
   emailPlaceholder: {
     type: String,
-    default: 'Bitte eingeben...'
+    default: () => 'Bitte eingeben...'
   },
   phonePlaceholder: {
     type: String,
-    default: 'Bitte eingeben...'
+    default: () => 'Bitte eingeben...'
   },
   topicPlaceholder: {
     type: String,
-    default: 'Bitte eingeben...'
+    default: () => 'Bitte eingeben...'
   },
   messagePlaceholder: {
     type: String,
-    default: 'Bitte eingeben...'
+    default: () => 'Bitte eingeben...'
   },
   topics: {
     type: Array,
@@ -130,7 +149,7 @@ defineProps({
   }
 })
 
-const { handleSubmit, handleReset, meta } = useForm({
+const { handleSubmit, handleReset, meta/*, submitCount*/ } = useForm({
   validationSchema: {
     title (value) {
       if (value) return true
@@ -172,20 +191,14 @@ const phone = useField('phone')
 const topic = useField('topic')
 const message = useField('message')
 
-function isSubmittable() {
-  return (meta.value.valid && meta.value.dirty
-      /*!useIsSubmitting() && *//*useSubmitCount === 0 && */)
-}
-
-watch(meta, () => {
-  submitDisabled.value = !isSubmittable()
-  isDirty.value = meta.value.dirty
-  console.log("Submittable: " + isSubmittable())
-})
-
 const toast = useToast()
 
 const onSubmit = handleSubmit(async(formData) => {
+  if(!isSubmittable() || bIsSubmitting.value) {
+    return
+  }
+
+  bIsSubmitting.value = true
   try {
     const response = await $fetch.raw('/api/contact', {
       method: 'POST',
@@ -208,5 +221,19 @@ const onSubmit = handleSubmit(async(formData) => {
   } catch (error) {
     console.log(error)
   }
+  finally {
+    bIsSubmitting.value = false
+  }
+})
+
+function isSubmittable() {
+  return (meta.value.valid && meta.value.dirty &&
+      !bIsSubmitting.value)
+}
+
+watch(meta, () => {
+  bIsSubmittable.value = !isSubmittable()
+  bIsDirty.value = meta.value.dirty
+  console.log("Submittable: " + isSubmittable())
 })
 </script>

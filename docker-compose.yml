@@ -1,0 +1,13 @@
+services:
+  nuxt:
+    build:
+      context: .
+      dockerfile: dockerfile
+    ports:
+      - "3000:3000"
+    networks:
+      - web
+networks:
+  web:
+    name: web
+    driver: bridge
