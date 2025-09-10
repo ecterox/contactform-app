@@ -17,7 +17,6 @@
 </template>
 
 <style scoped>
-
 </style>
 
 <script setup>
@@ -27,18 +26,14 @@ const toggleTheme = () => {
   console.log('Theme: ' + theme.name.value)
 }
 
-const Data = ref([])
-
+const Data = ref({})
 const loadAllData = async () => {
   const [topics, titles] = await Promise.all([
     $fetch('/api/contact/topics'),
     $fetch('/api/contact/titles')
   ])
 
-  Data.value = {
-    topics,
-    titles
-  }
+  Data.value = { topics, titles }
 }
 
 loadAllData()
